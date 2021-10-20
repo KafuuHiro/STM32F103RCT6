@@ -1,1 +1,77 @@
+#include "stm32f10x.h"
 
+#define LED1_GPIO_PORT GPIOC
+#define LED1_GPIO_CLK RCC_APB2Periph_GPIOC
+#define LED1_GPIO_PIN GPIO_Pin_13
+
+#define LED2_GPIO_PORT GPIOC
+#define LED2_GPIO_CLK RCC_APB2Periph_GPIOC
+#define LED2_GPIO_PIN GPIO_Pin_14
+
+#define LED3_GPIO_PORT GPIOC
+#define LED3_GPIO_CLK RCC_APB2Periph_GPIOC
+#define LED3_GPIO_PIN GPIO_Pin_15
+
+#define LED1_ON GPIO_ResetBits(GPIOC,LED1_GPIO_PIN)
+#define LED2_ON GPIO_ResetBits(GPIOC,LED2_GPIO_PIN)
+#define LED3_ON GPIO_ResetBits(GPIOC,LED3_GPIO_PIN)
+
+#define LED1_OFF GPIO_SetBits(GPIOC,LED1_GPIO_PIN)
+#define LED2_OFF GPIO_SetBits(GPIOC,LED2_GPIO_PIN)
+#define LED3_OFF GPIO_SetBits(GPIOC,LED3_GPIO_PIN)
+
+void LED_GPIO_Config(void)
+{
+	GPIO_InitTypeDef GPIO_InitStructure;
+	RCC_APB2PeriphClockCmd(LED1_GPIO_CLK|LED2_GPIO_CLK|LED3_GPIO_CLK,ENABLE);
+
+	GPIO_InitStructure.GPIO_Pin = LED1_GPIO_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(LED1_GPIO_PORT, &GPIO_InitStructure);
+	GPIO_SetBits(LED1_GPIO_PORT,LED1_GPIO_PIN);
+	
+	GPIO_InitStructure.GPIO_Pin = LED2_GPIO_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(LED2_GPIO_PORT, &GPIO_InitStructure);
+	GPIO_SetBits(LED2_GPIO_PORT,LED2_GPIO_PIN);
+	
+	GPIO_InitStructure.GPIO_Pin = LED3_GPIO_PIN;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(LED3_GPIO_PORT, &GPIO_InitStructure);
+	GPIO_SetBits(LED3_GPIO_PORT,LED3_GPIO_PIN);
+	
+}
+
+void delay_nms(uint16_t time) //72MHZ
+{
+	uint16_t i=0;
+	while(time--)
+	{
+		i=12000;
+		while(i--);
+	}
+}
+
+
+
+int main()
+{
+	SystemInit();
+	LED_GPIO_Config();
+	while(1)
+	{
+//		LED1_GPIO_PORT -> BRR = LED1_GPIO_PIN;
+//		GPIO_ResetBits(GPIOC,LED1_GPIO_PIN);
+		LED1_ON;
+		delay_nms(1000);
+		
+//		LED1_GPIO_PORT -> BSRR = LED1_GPIO_PIN;
+//		GPIO_SetBits(GPIOC,LED1_GPIO_PIN);
+		LED1_OFF;
+		delay_nms(1000);
+		
+	}
+}
